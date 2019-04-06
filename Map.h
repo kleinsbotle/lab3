@@ -5,18 +5,15 @@
 #ifndef RB_TREE_MAP_H
 #define RB_TREE_MAP_H
 
-#pragma once
-
 #include <iostream>
 #include <stdexcept>
 #include <string>
-
 
 #include "List.h"
 
 
 
-#define maxrow 7
+#define maxrow 7           //constants're being used to print the tree
 #define matrix_size 80
 #define offset 40
 
@@ -47,9 +44,6 @@ private:
 
     };
 
-    List<size_t> keys;
-    List<T> values;
-
 
     Node* root;
     size_t size;
@@ -63,9 +57,11 @@ private:
     void __balance(Node* node);
     void __delete_balance(Node* node);
     void delete_tree(Node* node);
-    void inorder_walk_key(Node* node);       //add all the keys in the list of keys in descending order
-    void inorder_walk_value(Node* node);     //add al the values in the list of values (in key descending order)
-    RB_Tree<T>::Node* Find(size_t key);
+    void inorder_walk_key(Node* node, List<size_t> *keys);       //add all the keys in the list of keys in descending order
+    void inorder_walk_value(Node* node, List<T> *values);     //add al the values in the list of values (in key descending order)
+    RB_Tree<T>::Node* __next_node(Node* node);
+    RB_Tree<T>::Node* __find(size_t key);
+
 
 
 public:
@@ -78,12 +74,11 @@ public:
     RB_Tree<T>::Node* GetRoot();
     List<size_t>* GetKeys();
     List<T>* GetValues();
-    RB_Tree<T>::Node* NextNode(Node* node);
+    T Find(size_t key);
     void Remove(size_t key);
-    T* GetValue(size_t key);
-
+    void ClearMap();
+    bool IsIn(size_t key);  //returns true if element with that key is in list, else returns false
 };
-
 
 
 template <typename T>
@@ -98,14 +93,7 @@ RB_Tree<T>::RB_Tree(){
 
 template <typename T>
 RB_Tree<T>::~RB_Tree(){
-    delete_tree(root);
-    keys.clear();
-    values.clear();
-    root = nullptr;
-    size = 0;
-    for (int i = 0; i < maxrow; i++)
-        delete SCREEN[i];
-    delete SCREEN;
+    ClearMap();
 }
 
 template <typename T>
@@ -310,18 +298,20 @@ void RB_Tree<T>::__balance(Node* node){
 
 template <typename T>
 List<size_t>* RB_Tree<T>::GetKeys(){
-    inorder_walk_key(root);
-    return &keys;
+    List<size_t> *keys = new List<size_t>;
+    inorder_walk_key(root, keys);
+    return keys;
 }
 
 template <typename T>
 List<T>* RB_Tree<T>::GetValues(){
-    inorder_walk_value(root);
-    return &values;
+    List<T> *values = new List<T>;
+    inorder_walk_value(root, values);
+    return values;
 }
 
 template <typename T>
-typename RB_Tree<T>::Node* RB_Tree<T>::Find(size_t key){
+typename RB_Tree<T>::Node* RB_Tree<T>::__find(size_t key){
 
     if (!size)
         return nullptr;
@@ -333,13 +323,24 @@ typename RB_Tree<T>::Node* RB_Tree<T>::Find(size_t key){
        else
            node = node->right;
     }
-    ////attention
     return node;
 }
 
+template <typename T>
+T RB_Tree<T>::Find(size_t key){
+    Node *node = __find(key);
+    if (node)
+        return node->data;
+    else
+    {
+        std::cout << "\nThe element with that key has not been found\n";
+    }
+}
+
+
 
 template <typename T>
-typename RB_Tree<T>::Node* RB_Tree<T>::NextNode(Node* node){  //Function returns the next element (search by key)
+typename RB_Tree<T>::Node* RB_Tree<T>::__next_node(Node* node){  //Function returns the next element (search by key)
     if (node->right){
        node = node->right;
        while (node->left)
@@ -419,16 +420,16 @@ void RB_Tree<T>::__delete_balance(Node* node){
 
 template <typename T>
 void RB_Tree<T>::Remove(size_t key){
-    Node *node = Find(key);
+    Node *node = __find(key);
     if (!node)
-        throw std::invalid_argument("There is no element with that key");
+        throw std::invalid_argument("\nThere is no element with that key\n");
 
 
     Node *child, *d_node;
     if ((!node->left) || (!node->right))
         d_node = node;
     else                            //if the deleted element has two children
-        d_node = NextNode(node);     //we need to find the next element (search by key)
+        d_node = __next_node(node);     //we need to find the next element (search by key)
 
     if (d_node->left)
         child = d_node->left;
@@ -460,32 +461,33 @@ void RB_Tree<T>::Remove(size_t key){
 }
 
 template <typename T>
-void RB_Tree<T>::inorder_walk_key(Node* node){
+void RB_Tree<T>::inorder_walk_key(Node* node, List<size_t> *keys){
     if (node){
-        inorder_walk_key(node->left);
-        keys.push_back(node->key);
-        inorder_walk_key(node->right);
+        inorder_walk_key(node->left, keys);
+        keys->push_back(node->key);
+        inorder_walk_key(node->right, keys);
     }
 }
 
 template <typename T>
-void RB_Tree<T>::inorder_walk_value(Node* node){
+void RB_Tree<T>::inorder_walk_value(Node* node, List<T> *values){
     if (node){
-        inorder_walk_value(node->left);
-        values.push_back(node->data);
-        inorder_walk_value(node->right);
+        inorder_walk_value(node->left, values);
+        values->push_back(node->data);
+        inorder_walk_value(node->right, values);
     }
 }
 
-
 template <typename T>
-T* RB_Tree<T>::GetValue(size_t key){
-    Node* node = Find(key);
-    if (node)
-        return &(node->data);
-    else
-        return nullptr;
+void RB_Tree<T>::ClearMap(){
+    delete_tree(root);
+    root = nullptr;
+    size = 0;
+    for (int i = 0; i < maxrow; i++)
+        delete SCREEN[i];
+    delete SCREEN;
 }
+
 
 
 

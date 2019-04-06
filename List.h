@@ -294,7 +294,6 @@ void List<Data>::clear(){
     }
     else if (size == 1){
         delete head;
-        delete tail;
         __empty_list();
     }
     else{
@@ -357,18 +356,6 @@ typename List<Data>::Node* List<Data>::get_head(){
     return head;
 }
 
-template <typename Data>
-int List<Data>::find(Data data){
-    Node* node = head;
-    int index = 0;
-    while (node){
-        if (node->data == data)
-            return index;
-        node = node->next;
-        index++;
-    }
-    return -1;
-}
 
 
 

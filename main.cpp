@@ -3,19 +3,20 @@
 
 #include "Haff_coder.h"
 
-
-using namespace std;
-
-
-
-
-
 int main() {
 
-   string str;
-   cout << "Enter the message: " << endl;
-   getline(cin, str);
+   std::string str;
+   std::cout << "Enter the message: " << std::endl;
+   getline(std::cin, str);
    Haff_coder coder = Haff_coder(str);
-   coder.Encode();
+  /* std::cout << coder.Encode() << std::endl;
+   coder.TablePrint();*/
+  /* cout << "Enter the message to decode: " << endl;
+   getline(cin, str);
+   std::cout << coder.Decode(str);*/
+  coder.FrequencyPrint();
+  coder.TablePrint();
+  std::cout << coder.Encode() << std::endl;
+  coder.MemInfo();
     return 0;
 }
