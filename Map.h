@@ -85,37 +85,6 @@ public:
 };
 
 
-/*
-class Haff_tree{
-
-private:
-
-    class Node{
-        char elem;
-        size_t freq;
-        Node *left, *right, *dad;
-
-
-        Node(char elem, size_t freq){
-            this->elem = elem;
-            this->freq = freq;
-            left = nullptr;
-            right = nullptr;
-            dad = nullptr;
-        }
-    };
-
-    Node *root;
-    size_t size;
-
-public:
-    Haff_tree(){ root = nullptr; size = 0;};
-
-};*/
-
-
-
-
 
 template <typename T>
 RB_Tree<T>::RB_Tree(){

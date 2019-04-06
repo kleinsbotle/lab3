@@ -16,8 +16,6 @@ int main() {
    cout << "Enter the message: " << endl;
    getline(cin, str);
    Haff_coder coder = Haff_coder(str);
- //  coder.Encode();
- coder.Test();
-
+   coder.Encode();
     return 0;
 }

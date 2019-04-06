@@ -67,10 +67,10 @@ private:
             prev = nullptr;
         }
         Node (Data elem){
-            Data elem1 = elem;
             data = elem;
             next = nullptr;
             prev = nullptr;
+
         }
         ~Node() { next = nullptr; prev = nullptr;};
     };
@@ -138,6 +138,7 @@ void List<Data>::push_front(Data data){
         head = tail = new_node;
     }
 }
+
 
 template <typename Data>
 void List<Data>::push_back(Data data){
@@ -369,19 +370,6 @@ int List<Data>::find(Data data){
     return -1;
 }
 
-/*
-template <typename Data>
-Data List<Data>::find_min(){
-    Node *min, *node;
-    node = head;
-    min = node;
-    while (node){
-        if (min->data.freq < node->data.freq)
-            min = node;
-        node = node->next;
-    }
-    return min->data;
-}*/
 
 
 #endif //LAB1_2_LIST_H
