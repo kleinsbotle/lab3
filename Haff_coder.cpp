@@ -4,11 +4,22 @@
 #include "Haff_coder.h"
 
 
+Haff_coder::Haff_coder(){
+    in_str = "";
+    root = nullptr;
+}
+
 Haff_coder::Haff_coder(std::string string){
+
+
+    if (!string.length())
+        throw std::invalid_argument("The string is empty");
 
     Tree_node node;
     in_str = string;
     out_str = "";
+    root = nullptr;
+
 
     for (int i = 0; i < string.length(); i++){
         if (!Haff_find(&list, string[i])){
@@ -19,8 +30,15 @@ Haff_coder::Haff_coder(std::string string){
 
     List_sort();
     Freq_table();
-    Tree_build();
-    Encode_str();
+    if (freq_table.GetSize() == 1){
+        table.Insert("1", string[0]);
+        for (int i = 0; i < string.length(); i++)
+            out_str += "1";
+    }
+    else{
+        Tree_build();
+        Encode_str();
+    }
 }
 
 Haff_coder::~Haff_coder(){
@@ -95,7 +113,7 @@ void Haff_coder::Tree_build(){
 void Haff_coder::List_sort(){
     List<Tree_node>::Node *node1, *node2, *next, *prev;
 
-    for (int i = 0; i < list.size - 2; i++){
+    for (int i = 0; i < list.size; i++){
         node1 = list.head;
         for (int j = 0; j < list.size - 1; j++){
             node2 = node1->next;
@@ -191,6 +209,8 @@ void Haff_coder::TablePrint(){
 
 
 std::string Haff_coder::Decode(std::string string){
+    if (!string.length())
+        throw std::invalid_argument("Wrong input");
     Tree_node *node = root;
     std::string result = "";
     for (int i = 0; i < string.length(); i++){
@@ -221,10 +241,8 @@ std::string Haff_coder::Decode(std::string string){
 }
 
 void Haff_coder::MemInfo(){
-    if (!out_str.length())
-        Encode();
 
-    unsigned in, out;
+    float in, out;
     in = in_str.length()*8;
     out = out_str.length();
     std::cout << "Input string memory size: " << in << std::endl;
@@ -256,4 +274,16 @@ void Haff_coder::Delete_tree(Tree_node *node){
         Delete_tree(node->left);
     }
     delete node;
+}
+
+RB_Tree<std::string>* Haff_coder::GetTable(){
+    RB_Tree<std::string> *table_copy = new RB_Tree<std::string>;
+    *table_copy = table;
+    return table_copy;
+}
+
+RB_Tree<size_t>* Haff_coder::GetFreqTable(){
+    RB_Tree<size_t> *table_copy = new RB_Tree<size_t>;
+    *table_copy = freq_table;
+    return table_copy;
 }
