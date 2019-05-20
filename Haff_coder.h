@@ -79,9 +79,9 @@ private:
     RB_Tree<std::string> table;
     RB_Tree<size_t> freq_table;
 
-    bool Haff_find(List<Tree_node> *list, char elem);
+    bool Haff_find(List<Tree_node> *list, char elem);  //find element in the list with matching char value
 
-    void Freq_table();
+    void Freq_table();  //make frequency table
     void Encode_str();
     void Tree_build();
     void List_sort();
